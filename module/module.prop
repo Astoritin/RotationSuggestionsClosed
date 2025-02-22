@@ -3,5 +3,5 @@ name=Rotation Suggestion Closed
 version=v1.0.1
 versionCode=80
 author=Astoritin Ambrosius
-updateJson=https://raw.githubusercontent.com/Astoritin/Rotate_Suggestion_Closed/main/webpage/update.json
+updateJson=https://raw.githubusercontent.com/Astoritin/Rotation_Suggestion_Closed/main/webpage/update.json
 description=Disable useless rotation suggestion button as rotating screen each time✨
