@@ -1,7 +1,7 @@
 id=rotationsuggestionclosed
 name=Rotation Suggestion Closed
-version=v1.0.1
-versionCode=80
+version=v1.2.0
+versionCode=200
 author=Astoritin Ambrosius
-updateJson=https://raw.githubusercontent.com/Astoritin/Rotation_Suggestion_Closed/main/webpage/update.json
-description=Disable useless rotation suggestion button as rotating screen each time✨
+updateJson=https://raw.githubusercontent.com/Astoritin/Rotate_Suggestion_Closed/main/webpage/update.json
+description=A module to isable useless rotation suggestion button as rotating screen each time.
