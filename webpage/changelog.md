@@ -1,7 +1,14 @@
-# Rotation Suggestion Closed / 关掉旋转建议按钮
+## Rotation Suggestion Closed / 关掉旋转建议按钮
 A Magisk module to disable rotation suggestion button / 一个用于禁用旋转建议按钮的 Magisk 模块
 
-## Changelog / 变更日志
+### Changelog / 变更日志
+
+### 1.2.0
+
+- Add the detect of Android version
+- 新增对安卓版本的判断
+- Add integrity verification to prove that the module has not been maliciously modified
+- 新增完整性验证以证明模块未被恶意修改
 
 ### 1.0.1
 - Sync the changes of customize.sh and aautilities.sh to improve the enhance maintainability
