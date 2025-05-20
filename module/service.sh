@@ -16,9 +16,9 @@ DESC_RS=""
 while true; do
     result_rs="$(settings get secure show_rotation_suggestions)"
     if [ $result_rs = 0 ]; then
-        DESC_RS="❎Closed"
+        DESC_RS="Closed"
     elif [ $result_rs = 1 ]; then
-        DESC_RS="✅Enabled"
+        DESC_RS="Enabled"
     fi
     DESCRIPTION="[⚙️Rotation suggestion button: $DESC_RS] $MOD_INTRO"
     update_config_value "description" "$DESCRIPTION" "$MODULE_PROP"
