@@ -4,7 +4,7 @@ MODDIR=${0%/*}
 MODULE_PROP="$MODDIR/module.prop"
 MOD_INTRO="A Magisk module to disable useless rotation suggestion button as rotating screen each time."
 
-. "$TMPDIR/aautilities.sh"
+. "$MODDIR/aautilities.sh"
 
 while [ "$(getprop sys.boot_completed)" != "1" ]; do
     sleep 1
