@@ -1,30 +1,16 @@
 #!/system/bin/sh
 SKIPUNZIP=1
+
 VERIFY_DIR="$TMPDIR/.aa_verify"
+
 MOD_NAME="$(grep_prop name "${TMPDIR}/module.prop")"
 MOD_VER="$(grep_prop version "${TMPDIR}/module.prop") ($(grep_prop versionCode "${TMPDIR}/module.prop"))"
+MOD_INTRO="A Magisk module to disable useless rotation suggestion button as rotating screen each time."
 
-if [ "$API" -eq 29 ]; then
-    logowl "Detect Android 10" "WARN"
-    logowl "$MOD_NAME will NOT work as expect if developers"
-    logowl "have NOT backported this feature into your ROM"
-    logowl "Anyway, you may still have a try"
+[ ! -d "$VERIFY_DIR" ] && mkdir -p "$VERIFY_DIR"
 
-    if ! settings get secure show_rotation_suggestions &>/dev/null; then
-        logowl "Detect this feature does NOT backport into your ROM" "ERROR"
-        abort "Feature does NOT backport into ROM!"
-    fi
-fi
-
-if [ "$API" -lt 29 ]; then
-    logowl "Detect Android 9-" "ERROR"
-    logowl "$MOD_NAME will NOT work"
-    logowl "since this feature does NOT exist"
-    abort "Android 9- is NOT support!"
-fi
-
-if [ ! -d "$VERIFY_DIR" ]; then
-    mkdir -p "$VERIFY_DIR"
+if ! settings get secure show_rotation_suggestions &>/dev/null; then
+    abort "Your ROM does NOT support rotation suggestion feature"
 fi
 
 echo "- Extract aautilities.sh"
@@ -40,13 +26,17 @@ logowl "Setting up $MOD_NAME"
 logowl "Version: $MOD_VER"
 install_env_check
 show_system_info
+logowl "Install from $ROOT_SOL app"
 logowl "Essential checks"
 extract "$ZIPFILE" 'aautilities.sh' "$VERIFY_DIR"
 extract "$ZIPFILE" 'customize.sh' "$VERIFY_DIR"
 logowl "Extract module files"
 extract "$ZIPFILE" 'module.prop' "$MODPATH"
+extract "$ZIPFILE" 'action.sh' "$MODPATH"
 extract "$ZIPFILE" 'service.sh' "$MODPATH"
 extract "$ZIPFILE" 'uninstall.sh' "$MODPATH"
-rm -rf "$VERIFY_DIR"
-set_module_files_perm
+logowl "Set permission"
+set_permission_recursive "$MODPATH" 0 0 0755 0644
 logowl "Welcome to use ${MOD_NAME}!"
+DESCRIPTION="[⏳Reboot to take effect.] $MOD_INTRO"
+update_config_value "description" "$DESCRIPTION" "$MODPATH/module.prop"
