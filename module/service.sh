@@ -20,7 +20,7 @@ while true; do
     elif [ $result_rs = 1 ]; then
         DESC_RS="✅Enabled"
     fi
-    DESCRIPTION="[$DESC_RS] $MOD_INTRO"
+    DESCRIPTION="[⚙️Rotation suggestion button: $DESC_RS] $MOD_INTRO"
     update_config_value "description" "$DESCRIPTION" "$MODULE_PROP"
     sleep 3
 done
