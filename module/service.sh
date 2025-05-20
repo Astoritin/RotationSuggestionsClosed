@@ -14,6 +14,7 @@ settings put secure show_rotation_suggestions 0
 
 DESC_RS=""
 while true; do
+    [ -f "$MODDIR/update" ] && exit 0
     result_rs="$(settings get secure show_rotation_suggestions)"
     if [ $result_rs = 0 ]; then
         DESC_RS="Closed"
