@@ -3,6 +3,20 @@ A Magisk module to disable rotation suggestion button / 一个用于禁用旋转
 
 ### Changelog / 变更日志
 
+### 1.2.2
+
+- Add action.sh to switch the state of showing rotation suggestion button quickly
+- 新增 action.sh 以快速切换显示旋转建议按钮的状态
+- Add new feature to update module description realtime to show the state of showing rotation suggestion button currently
+- 新增功能：实时更新模块描述以显示旋转建议按钮的实时状态
+- Sync the changes of aautilities.sh in Bloatware Slayer
+- 同步 Bloatware Slayer 的 aautilities.sh 中的变动
+
+### Pure 1.0
+
+- Pure disabling rotation suggestion button without anything else
+- 纯粹的禁用旋转建议按钮，无任何其他功能
+
 ### 1.2.0
 
 - Add the detect of Android version
