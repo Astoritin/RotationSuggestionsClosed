@@ -2,9 +2,9 @@
 MODDIR=${0%/*}
 
 MODULE_PROP="$MODDIR/module.prop"
-MOD_INTRO="A Magisk module to disable useless rotation suggestion button as rotating screen each time."
+MOD_INTRO="A Magisk module to disable rotation suggestion button as rotating screen each time."
 
-. "$MODDIR/aautilities.sh"
+. "$MODDIR/aa-util.sh"
 
 while [ "$(getprop sys.boot_completed)" != "1" ]; do
     sleep 1
@@ -17,11 +17,11 @@ while true; do
     [ -f "$MODDIR/update" ] && exit 0
     result_rs="$(settings get secure show_rotation_suggestions)"
     if [ $result_rs = 0 ]; then
-        DESC_RS="Closed"
+        DESC_RS="OFF"
     elif [ $result_rs = 1 ]; then
-        DESC_RS="Enabled"
+        DESC_RS="ON"
     fi
-    DESCRIPTION="[⚙️Rotation suggestion button: $DESC_RS] $MOD_INTRO"
-    update_config_value "description" "$DESCRIPTION" "$MODULE_PROP"
+    DESCRIPTION="[⚙️Button state: $DESC_RS] $MOD_INTRO"
+    update_config_var "description" "$DESCRIPTION" "$MODULE_PROP"
     sleep 3
 done
