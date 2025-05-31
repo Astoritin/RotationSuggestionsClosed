@@ -1,7 +1,7 @@
 id=rotationsuggestionclosed
 name=Rotation Suggestion Closed
-version=v1.2.2
-versionCode=240
+version=v1.2.3
+versionCode=250
 author=Astoritin Ambrosius
 updateJson=https://raw.githubusercontent.com/Astoritin/RotationSuggestionClosed/main/webpage/update.json
-description=A Magisk module to disable rotation suggestion button as rotating screen each time.
+description=A Magisk module to disable rotation suggestion button as rotating screen.
