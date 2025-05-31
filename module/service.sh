@@ -2,7 +2,7 @@
 MODDIR=${0%/*}
 
 MODULE_PROP="$MODDIR/module.prop"
-MOD_INTRO="A Magisk module to disable rotation suggestion button as rotating screen each time."
+MOD_INTRO="A Magisk module to disable rotation suggestion button as rotating screen."
 
 . "$MODDIR/aa-util.sh"
 
