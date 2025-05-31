@@ -5,7 +5,7 @@ VERIFY_DIR="$TMPDIR/.aa_verify"
 
 MOD_NAME="$(grep_prop name "${TMPDIR}/module.prop")"
 MOD_VER="$(grep_prop version "${TMPDIR}/module.prop") ($(grep_prop versionCode "${TMPDIR}/module.prop"))"
-MOD_INTRO="A Magisk module to disable rotation suggestion button as rotating screen each time."
+MOD_INTRO="A Magisk module to disable rotation suggestion button as rotating screen."
 
 [ ! -d "$VERIFY_DIR" ] && mkdir -p "$VERIFY_DIR"
 
@@ -39,5 +39,4 @@ extract "$ZIPFILE" 'uninstall.sh' "$MODPATH"
 logowl "Set permission"
 set_permission_recursive "$MODPATH" 0 0 0755 0644
 logowl "Welcome to use ${MOD_NAME}!"
-DESCRIPTION="[✨Reboot to take effect.] $MOD_INTRO"
-update_config_var "description" "$DESCRIPTION" "$MODPATH/module.prop"
+settings put secure show_rotation_suggestions 0
