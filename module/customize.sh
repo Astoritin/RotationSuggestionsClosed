@@ -7,7 +7,7 @@ MOD_NAME="$(grep_prop name "${TMPDIR}/module.prop")"
 MOD_VER="$(grep_prop version "${TMPDIR}/module.prop") ($(grep_prop versionCode "${TMPDIR}/module.prop"))"
 MOD_INTRO="Stop showing rotation suggestions button as rotating screen."
 
-[ "$(getprop ro.build.version.sdk)" -lt 28 ] && abort "Your ROM does NOT support rotation suggestions feature"
+[ "$(getprop ro.build.version.sdk)" -lt 28 ] && abort "- Rotation suggestions feature is NOT supported!"
 
 [ ! -d "$VERIFY_DIR" ] && mkdir -p "$VERIFY_DIR"
 
@@ -36,6 +36,6 @@ extract "$ZIPFILE" 'service.sh' "$MODPATH"
 extract "$ZIPFILE" 'uninstall.sh' "$MODPATH"
 logowl "Set permission"
 set_permission_recursive "$MODPATH" 0 0 0755 0644
-logowl "Close button"
+logowl "Disable rotation suggestions button"
 settings put secure show_rotation_suggestions 0
 logowl "Welcome to use ${MOD_NAME}!"
