@@ -2,7 +2,7 @@
 MODDIR=${0%/*}
 
 MODULE_PROP="$MODDIR/module.prop"
-MOD_INTRO="A Magisk module to disable rotation suggestion button as rotating screen."
+MOD_INTRO="Stop showing rotation suggestions button as rotating screen."
 
 . "$MODDIR/aa-util.sh"
 
@@ -21,7 +21,7 @@ while true; do
     elif [ $result_rs = 1 ]; then
         DESC_RS="ON"
     fi
-    DESCRIPTION="[⚙️Button state: $DESC_RS] $MOD_INTRO"
+    DESCRIPTION="[⚙️Button: $DESC_RS] $MOD_INTRO"
     update_config_var "description" "$DESCRIPTION" "$MODULE_PROP"
     sleep 3
 done
