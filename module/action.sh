@@ -1,6 +1,9 @@
 #!/system/bin/sh
 MODDIR=${0%/*}
 
+echo "Rotation Suggestions Closed"
+echo "Stop showing rotation suggestions button as rotating screen"
+echo " "
 result_rs="$(settings get secure show_rotation_suggestions)"
 if [ $result_rs = 0 ]; then
     echo "- Current state: OFF"
@@ -13,5 +16,5 @@ elif [ $result_rs = 1 ]; then
     echo "- Button disabled"
     echo "- Now button will NOT be shown as detecting rotation"
 fi
-sleep 3
+sleep 1
 exit 0
