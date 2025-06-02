@@ -5,13 +5,11 @@ VERIFY_DIR="$TMPDIR/.aa_verify"
 
 MOD_NAME="$(grep_prop name "${TMPDIR}/module.prop")"
 MOD_VER="$(grep_prop version "${TMPDIR}/module.prop") ($(grep_prop versionCode "${TMPDIR}/module.prop"))"
-MOD_INTRO="A Magisk module to disable rotation suggestion button as rotating screen."
+MOD_INTRO="Stop showing rotation suggestions button as rotating screen."
+
+[ "$(getprop ro.build.version.sdk)" -lt 28 ] && abort "Your ROM does NOT support rotation suggestions feature"
 
 [ ! -d "$VERIFY_DIR" ] && mkdir -p "$VERIFY_DIR"
-
-if ! settings get secure show_rotation_suggestions &>/dev/null; then
-    abort "Your ROM does NOT support rotation suggestion feature"
-fi
 
 echo "- Extract aa-util.sh"
 unzip -o "$ZIPFILE" 'aa-util.sh' -d "$TMPDIR" >&2
@@ -38,5 +36,6 @@ extract "$ZIPFILE" 'service.sh' "$MODPATH"
 extract "$ZIPFILE" 'uninstall.sh' "$MODPATH"
 logowl "Set permission"
 set_permission_recursive "$MODPATH" 0 0 0755 0644
-logowl "Welcome to use ${MOD_NAME}!"
+logowl "Close button"
 settings put secure show_rotation_suggestions 0
+logowl "Welcome to use ${MOD_NAME}!"
