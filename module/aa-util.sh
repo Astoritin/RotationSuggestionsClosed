@@ -146,10 +146,12 @@ logowl() {
 
 print_line() {
 
-    length=${1:-40}
+    length=${1:-45}
+    symbol=${2:--}
 
-    line=$(printf "%-${length}s" | tr ' ' '-')
+    line=$(printf "%-${length}s" | tr ' ' "$symbol")
     logowl "$line" "-"
+
 }
 
 update_config_var() {
