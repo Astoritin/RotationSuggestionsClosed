@@ -17,7 +17,6 @@ is_magisk() {
         *) MAGISK_BRANCH_NAME="Magisk" ;;
     esac
     DETECT_MAGISK="true"
-    DETECT_MAGISK_DETAIL="$MAGISK_BRANCH_NAME (${MAGISK_VER_CODE:-$MAGISK_V_VER_CODE})"
     return 0
 
 }
@@ -25,7 +24,6 @@ is_magisk() {
 is_kernelsu() {
     if [ -n "$KSU" ]; then
         DETECT_KSU="true"
-        DETECT_KSU_DETAIL="KernelSU (kernel:$KSU_KERNEL_VER_CODE, ksud:$KSU_VER_CODE)"
         ROOT_SOL="KernelSU"
         return 0
     fi
@@ -35,7 +33,6 @@ is_kernelsu() {
 is_apatch() {
     if [ -n "$APATCH" ]; then
         DETECT_APATCH="true"
-        DETECT_APATCH_DETAIL="APatch ($APATCH_VER_CODE)"
         ROOT_SOL="APatch"
         return 0
     fi
@@ -53,50 +50,23 @@ install_env_check() {
     is_magisk && ROOT_SOL_COUNT=$((ROOT_SOL_COUNT + 1))
 
     if [ "$DETECT_KSU" = "true" ]; then
+        ROOT_SOL="KernelSU"
         ROOT_SOL_DETAIL="KernelSU (kernel:$KSU_KERNEL_VER_CODE, ksud:$KSU_VER_CODE)"
-        if [ "$ROOT_SOL_COUNT" -gt 1 ]; then
-            ROOT_SOL="Multiple"
-            if [ "$DETECT_APATCH" = "true" ] && [ "$DETECT_MAGISK" = "true" ]; then
-                ROOT_SOL_DETAIL="Multiple (${DETECT_MAGISK_DETAIL};${DETECT_KSU_DETAIL};${DETECT_APATCH_DETAIL})"
-            elif [ "$DETECT_APATCH" = "true" ]; then
-                ROOT_SOL_DETAIL="Multiple (${DETECT_KSU_DETAIL};${DETECT_APATCH_DETAIL})"
-            elif [ "$DETECT_MAGISK" = "true" ]; then
-                ROOT_SOL_DETAIL="Multiple (${DETECT_MAGISK_DETAIL};${DETECT_KSU_DETAIL})"
-            fi
-        elif [ "$ROOT_SOL_COUNT" -eq 1 ]; then
-            ROOT_SOL="KernelSU"
-        fi
     elif [ "$DETECT_APATCH" = "true" ]; then
+        ROOT_SOL="APatch"
         ROOT_SOL_DETAIL="APatch ($APATCH_VER_CODE)"
-        if [ "$ROOT_SOL_COUNT" -gt 1 ] && [ "$DETECT_MAGISK" = "true" ]; then
-            ROOT_SOL="Multiple"
-            ROOT_SOL_DETAIL="Multiple (${DETECT_MAGISK_DETAIL};${DETECT_APATCH_DETAIL})"
-        elif [ "$ROOT_SOL_COUNT" -eq 1 ]; then
-            ROOT_SOL="APatch"
-        fi
     elif [ "$DETECT_MAGISK" = "true" ]; then
         ROOT_SOL="Magisk"
         ROOT_SOL_DETAIL="$MAGISK_BRANCH_NAME (${MAGISK_VER_CODE:-$MAGISK_V_VER_CODE})"
     fi
 
-    if [ "$ROOT_SOL_COUNT" -lt 1 ]; then
+    if [ "$ROOT_SOL_COUNT" -gt 1 ]; then
+        ROOT_SOL="Multiple"
+        ROOT_SOL_DETAIL="Multiple"
+    elif [ "$ROOT_SOL_COUNT" -lt 1 ]; then
         ROOT_SOL="Unknown"
         ROOT_SOL_DETAIL="Unknown"
     fi
-
-}
-
-module_intro() {
-
-    install_env_check
-    print_line
-    logowl "$MOD_NAME"
-    logowl "By $MOD_AUTHOR"
-    logowl "Version: $MOD_VER"
-    logowl "Root: $ROOT_SOL_DETAIL"
-    logowl "Timestamp: $(date +"%Y-%m-%d %H:%M:%S")"
-    logowl "Module dir: $MODDIR"
-    print_line
 
 }
 
@@ -108,10 +78,11 @@ logowl() {
     [ -z "$LOG_MSG" ] && return 1
 
     case "$LOG_MSG_LEVEL" in
-        "TIPS") LOG_MSG_PREFIX="> " ;;
-        "WARN") LOG_MSG_PREFIX="- Warn: " ;;
-        "ERROR") LOG_MSG_PREFIX="! ERROR: " ;;
-        "FATAL") LOG_MSG_PREFIX="× FATAL: " ;;
+        "W") LOG_MSG_PREFIX="? Warn: " ;;
+        "E") LOG_MSG_PREFIX="! ERROR: " ;;
+        "F") LOG_MSG_PREFIX="× FATAL: " ;;
+        ">") LOG_MSG_PREFIX="> " ;;
+        "*" ) LOG_MSG_PREFIX="* " ;; 
         " ") LOG_MSG_PREFIX="  " ;;
         "-") LOG_MSG_PREFIX="" ;;
         *) LOG_MSG_PREFIX="- " ;;
@@ -119,9 +90,9 @@ logowl() {
 
     if [ -n "$LOG_FILE" ]; then
         if [ "$LOG_MSG_LEVEL" = "ERROR" ] || [ "$LOG_MSG_LEVEL" = "FATAL" ]; then
-            echo "----------------------------------------" >> "$LOG_FILE"
+            echo "---------------------------------------------------" >> "$LOG_FILE"
             echo "${LOG_MSG_PREFIX}${LOG_MSG}" >> "$LOG_FILE"
-            echo "----------------------------------------" >> "$LOG_FILE"
+            echo "---------------------------------------------------" >> "$LOG_FILE"
         elif [ "$LOG_MSG_LEVEL" = "-" ]; then
             echo "$LOG_MSG" >> "$LOG_FILE"
         else
@@ -130,9 +101,9 @@ logowl() {
     else
         if command -v ui_print >/dev/null 2>&1; then
             if [ "$LOG_MSG_LEVEL" = "ERROR" ] || [ "$LOG_MSG_LEVEL" = "FATAL" ]; then
-                ui_print "----------------------------------------"
+                ui_print "---------------------------------------------------"
                 ui_print "${LOG_MSG_PREFIX}${LOG_MSG}"
-                ui_print "----------------------------------------"
+                ui_print "---------------------------------------------------"
             elif [ "$LOG_MSG_LEVEL" = "-" ]; then
                 ui_print "$LOG_MSG"
             else
@@ -146,7 +117,7 @@ logowl() {
 
 print_line() {
 
-    length=${1:-45}
+    length=${1:-51}
     symbol=${2:--}
 
     line=$(printf "%-${length}s" | tr ' ' "$symbol")
@@ -154,33 +125,18 @@ print_line() {
 
 }
 
-update_config_var() {
-    key_name="$1"
-    key_value="$2"
-    file_path="$3"
-
-    [ -z "$key_name" ] || [ -z "$key_value" ] || [ -z "$file_path" ] && return 1
-    [ ! -f "$file_path" ] && return 2
-
-    sed -i "/^${key_name}=/c\\${key_name}=${key_value}" "$file_path"
-
-    result_update_value=$?
-    return "$result_update_value"
-
-}
-
-
 show_system_info() {
 
     logowl "Device: $(getprop ro.product.brand) $(getprop ro.product.model) ($(getprop ro.product.device))"
     logowl "OS: Android $(getprop ro.build.version.release) (API $(getprop ro.build.version.sdk)), $(getprop ro.product.cpu.abi | cut -d '-' -f1)"
+    logowl "Kernel: $(uname -r)"
 
 }
 
 abort_verify() {
 
     [ -n "$VERIFY_DIR" ] && [ -d "$VERIFY_DIR" ] && [ "$VERIFY_DIR" != "/" ] && rm -rf "$VERIFY_DIR"
-    logowl "$1" "ERROR"
+    logowl "$1" "E"
     abort "This zip may be corrupted or has been maliciously modified!"
 
 }
@@ -205,11 +161,10 @@ extract() {
     fi
 
     unzip $opts "$zip" "$file" -d "$dir" >&2
-    [ -f "$file_path" ] || abort_verify "$file does NOT exist!"
-    logowl "Extract $file → $file_path" >&1
+    [ -f "$file_path" ] || abort_verify "$file does NOT exist"
 
     unzip $opts "$zip" "$file.sha256" -d "$VERIFY_DIR" >&2
-    [ -f "$hash_path" ] || abort_verify "$file.sha256 does NOT exist!"
+    [ -f "$hash_path" ] || abort_verify "$file.sha256 does NOT exist"
 
     expected_hash="$(cat "$hash_path")"
     calculated_hash="$(sha256sum "$file_path" | cut -d ' ' -f1)"

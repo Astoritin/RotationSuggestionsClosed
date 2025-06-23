@@ -5,9 +5,9 @@ VERIFY_DIR="$TMPDIR/.aa_verify"
 
 MOD_NAME="$(grep_prop name "${TMPDIR}/module.prop")"
 MOD_VER="$(grep_prop version "${TMPDIR}/module.prop") ($(grep_prop versionCode "${TMPDIR}/module.prop"))"
-MOD_INTRO="Stop showing rotation suggestions button as rotating screen."
+MOD_INTRO="Stop showing rotation suggestions button."
 
-[ "$(getprop ro.build.version.sdk)" -lt 28 ] && abort "- Rotation suggestions feature is NOT supported!"
+[ "$(getprop ro.build.version.sdk)" -lt 28 ] && abort "Rotation suggestions feature is NOT supported!"
 
 [ ! -d "$VERIFY_DIR" ] && mkdir -p "$VERIFY_DIR"
 
@@ -25,17 +25,14 @@ logowl "Version: $MOD_VER"
 install_env_check
 show_system_info
 logowl "Install from $ROOT_SOL app"
-logowl "Essential checks"
-extract "$ZIPFILE" 'aa-util.sh' "$VERIFY_DIR"
+logowl "Root: $ROOT_SOL_DETAIL"
 extract "$ZIPFILE" 'customize.sh' "$VERIFY_DIR"
-logowl "Extract module files"
-extract "$ZIPFILE" 'aa-util.sh' "$MODPATH"
+extract "$ZIPFILE" 'aa-util.sh' "$VERIFY_DIR"
 extract "$ZIPFILE" 'module.prop' "$MODPATH"
 extract "$ZIPFILE" 'action.sh' "$MODPATH"
 extract "$ZIPFILE" 'service.sh' "$MODPATH"
 extract "$ZIPFILE" 'uninstall.sh' "$MODPATH"
 logowl "Set permission"
 set_permission_recursive "$MODPATH" 0 0 0755 0644
-logowl "Disable rotation suggestions button"
 settings put secure show_rotation_suggestions 0
 logowl "Welcome to use ${MOD_NAME}!"

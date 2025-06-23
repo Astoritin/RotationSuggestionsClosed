@@ -1,7 +1,7 @@
 id=rotationsuggestionsclosed
 name=Rotation Suggestions Closed
-version=v1.1.0
-versionCode=110
+version=v1.1.2
+versionCode=112
 author=Astoritin Ambrosius
 updateJson=https://raw.githubusercontent.com/Astoritin/RotationSuggestionsClosed/main/webpage/update.json
-description=Stop showing rotation suggestion button as rotating screen.
+description=Stop showing rotation suggestion button.
