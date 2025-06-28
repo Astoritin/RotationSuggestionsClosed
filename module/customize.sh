@@ -22,12 +22,12 @@ install_env_check
 show_system_info
 logowl "Install from $ROOT_SOL app"
 logowl "Root: $ROOT_SOL_DETAIL"
-extract "$ZIPFILE" 'customize.sh' "$TMPDIR"
-extract "$ZIPFILE" 'aa-util.sh' "$TMPDIR"
-extract "$ZIPFILE" 'module.prop' "$MODPATH"
-extract "$ZIPFILE" 'action.sh' "$MODPATH"
-extract "$ZIPFILE" 'service.sh' "$MODPATH"
-extract "$ZIPFILE" 'uninstall.sh' "$MODPATH"
+extract 'customize.sh' "$TMPDIR"
+extract 'aa-util.sh' "$TMPDIR"
+extract 'module.prop'
+extract 'action.sh'
+extract 'service.sh'
+extract 'uninstall.sh'
 logowl "Set permission"
 set_permission_recursive "$MODPATH" 0 0 0755 0644
 settings put secure show_rotation_suggestions 0
