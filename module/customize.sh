@@ -5,7 +5,7 @@ MOD_NAME="$(grep_prop name "${TMPDIR}/module.prop")"
 MOD_VER="$(grep_prop version "${TMPDIR}/module.prop") ($(grep_prop versionCode "${TMPDIR}/module.prop"))"
 MOD_INTRO="Stop showing rotation suggestions button."
 
-[ "$(getprop ro.build.version.sdk)" -lt 28 ] && abort "Rotation suggestions feature is NOT supported!"
+[ "$(getprop ro.build.version.sdk)" -lt 28 ] && abort "- Rotation suggestions feature is NOT supported!"
 
 echo "- Extract aa-util.sh"
 unzip -o "$ZIPFILE" 'aa-util.sh' -d "$TMPDIR" >&2
@@ -26,7 +26,6 @@ extract 'customize.sh' "$TMPDIR"
 extract 'aa-util.sh' "$TMPDIR"
 extract 'module.prop'
 extract 'action.sh'
-extract 'service.sh'
 extract 'uninstall.sh'
 logowl "Set permission"
 set_permission_recursive "$MODPATH" 0 0 0755 0644
