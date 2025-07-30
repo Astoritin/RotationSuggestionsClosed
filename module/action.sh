@@ -1,7 +1,7 @@
 #!/system/bin/sh
 MODDIR=${0%/*}
 
-MOD_INTRO="Stop showing rotation suggestions button."
+MOD_INTRO="Stop showing rotation suggestions button"
 SEPARATE_LINE="----------------------------------------"
 
 echo "$SEPARATE_LINE"

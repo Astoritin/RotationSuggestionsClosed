@@ -10,7 +10,7 @@ is_magisk() {
     MAGISK_V_VER_NAME="$(magisk -v)"
     MAGISK_V_VER_CODE="$(magisk -V)"
     case "$MAGISK_V_VER_NAME" in
-        *"-alpha"*) MAGISK_BRANCH_NAME="Magisk Alpha" ;;
+        *"-alpha"*) MAGISK_BRANCH_NAME="Alpha" ;;
         *"-lite"*)  MAGISK_BRANCH_NAME="Magisk Lite" ;;
         *"-kitsune"*) MAGISK_BRANCH_NAME="Kitsune Mask" ;;
         *"-delta"*) MAGISK_BRANCH_NAME="Magisk Delta" ;;
@@ -70,11 +70,12 @@ install_env_check() {
 
 }
 
-logowl() {
+eyco() {
     LOG_MSG="$1"
     LOG_MSG_LEVEL="$2"
     LOG_MSG_PREFIX=""
     SEPARATE_LINE="---------------------------------------------"
+    TIMESTAMP_FORMAT="%02d:%02d:%02d:%03d | "
 
     [ -z "$LOG_MSG" ] && return 1
 
@@ -86,18 +87,24 @@ logowl() {
         "*" ) LOG_MSG_PREFIX="* " ;; 
         " ") LOG_MSG_PREFIX="  " ;;
         "-") LOG_MSG_PREFIX="" ;;
-        *) LOG_MSG_PREFIX="- " ;;
+        *) if [ -n "$LOG_FILE" ]; then
+            LOG_MSG_PREFIX=""
+            else
+            LOG_MSG_PREFIX="- "
+            fi
+            ;;
     esac
 
     if [ -n "$LOG_FILE" ]; then
+        TIME_STAMP="$(date +"%Y-%m-%d %H:%M:%S.%3N") | "
         if [ "$LOG_MSG_LEVEL" = "ERROR" ] || [ "$LOG_MSG_LEVEL" = "FATAL" ]; then
             echo "$SEPARATE_LINE" >> "$LOG_FILE"
-            echo "${LOG_MSG_PREFIX}${LOG_MSG}" >> "$LOG_FILE"
+            echo "${TIME_STAMP}${LOG_MSG_PREFIX}${LOG_MSG}" >> "$LOG_FILE"
             echo "$SEPARATE_LINE" >> "$LOG_FILE"
         elif [ "$LOG_MSG_LEVEL" = "-" ]; then
-            echo "$LOG_MSG" >> "$LOG_FILE"
+            echo "${LOG_MSG}" >> "$LOG_FILE"
         else
-            echo "${LOG_MSG_PREFIX}${LOG_MSG}" >> "$LOG_FILE"
+            echo "${TIME_STAMP}${LOG_MSG_PREFIX}${LOG_MSG}" >> "$LOG_FILE"
         fi
     else
         if command -v ui_print >/dev/null 2>&1; then
@@ -118,20 +125,36 @@ logowl() {
 
 print_line() {
 
-    length=${1:-51}
+    length=${1:-74}
     symbol=${2:--}
 
     line=$(printf "%-${length}s" | tr ' ' "$symbol")
-    logowl "$line" "-"
+    eyco "$line" "-"
 
 }
 
 show_system_info() {
 
-    logowl "Device: $(getprop ro.product.brand) $(getprop ro.product.model) ($(getprop ro.product.device))"
-    logowl "OS: Android $(getprop ro.build.version.release) (API $(getprop ro.build.version.sdk)), $(getprop ro.product.cpu.abi | cut -d '-' -f1)"
-    logowl "Kernel: $(uname -r)"
+    eyco "Device: $(getprop ro.product.brand) $(getprop ro.product.model) ($(getprop ro.product.device))"
+    eyco "OS: Android $(getprop ro.build.version.release) (API $(getprop ro.build.version.sdk)), $(getprop ro.product.cpu.abi | cut -d '-' -f1)"
+    eyco "Kernel: $(uname -r)"
 
+}
+
+module_intro() {
+
+    MODULE_PROP="$MODDIR/module.prop"
+    MOD_NAME="$(grep_config_var "name" "$MODULE_PROP")"
+    MOD_AUTHOR="$(grep_config_var "author" "$MODULE_PROP")"
+    MOD_VER="$(grep_config_var "version" "$MODULE_PROP") ($(grep_config_var "versionCode" "$MODULE_PROP"))"
+
+    install_env_check
+    print_line
+    eyco "$MOD_NAME"
+    eyco "By $MOD_AUTHOR"
+    eyco "Version: $MOD_VER"
+    eyco "Root: $ROOT_SOL_DETAIL"
+    print_line
 }
 
 extract() {
@@ -160,31 +183,8 @@ extract() {
     calculated_hash="$(sha256sum "$file_path" | cut -d ' ' -f1)"
 
     if [ "$expected_hash" == "$calculated_hash" ]; then
-        logowl "Verified $file" >&1
+        eyco "Verified $file" >&1
     else
         abort "! Failed to verify $file"
     fi
-}
-
-set_permission() {
-
-    chown $2:$3 $1 || return 1    
-    chmod $4 $1 || return 1
-    
-    selinux_content=$5
-    [ -z "$selinux_content" ] && selinux_content=u:object_r:system_file:s0
-    chcon $selinux_content $1 || return 1
-
-}
-
-set_permission_recursive() {
-
-    find $1 -type d 2>/dev/null | while read dir; do
-        set_permission $dir $2 $3 $4 $6
-    done
-
-    find $1 -type f -o -type l 2>/dev/null | while read file; do
-        set_permission $file $2 $3 $5 $6
-    done
-
 }
